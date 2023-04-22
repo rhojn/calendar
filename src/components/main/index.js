@@ -1,15 +1,13 @@
 import styles from './styles.module.scss';
 import Sidebar from '../sidebar';
+import Events from '../events';
 
-const Main = ({ selectedDate, onSelect }) => {
+const Main = ({ selectedDate, events, addEvent, deleteEvent, onSelect }) => {
+
   return (
     <main className={styles.main}>
       <Sidebar selectedDate={selectedDate} onSelect={onSelect} />
-      <div class={styles.events}>
-        <div className={styles.topBar}>
-          <h1>{selectedDate.toDateString()}</h1>
-        </div>
-      </div>
+      <Events selectedDate={selectedDate} events={events} onSelect={onSelect} />
     </main>
   );
 };

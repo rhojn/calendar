@@ -1,16 +1,12 @@
-import styles from './styles.module.scss';
-import next from './chevron-right.svg';
-import prev from './chevron-left.svg';
-
 import Button from '../../button';
+import styles from './styles.module.scss';
+import next from '../../../icons/chevron-right.svg';
+import prev from '../../../icons/chevron-left.svg';
 
-const Header = ({ month, year, onNext, onPrev }) => {
+const Header = ({ selectedDate, onPrev, onNext }) => {
   return (
     <div className={styles.header}>
-      <h1>
-        {month} {year}
-      </h1>
-
+      <h1>{selectedDate.toDateString()}</h1>
       <div className={styles.actions}>
         <Button className={styles.actionButton} onClick={onPrev}>
           <img src={prev} alt='Previous Month' />
@@ -23,4 +19,4 @@ const Header = ({ month, year, onNext, onPrev }) => {
   );
 };
 
-export default Header;
+export default Header
