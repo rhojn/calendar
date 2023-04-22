@@ -1,0 +1,13 @@
+.calendar {
+  min-height: 100px;
+  border-radius: 8px;
+  padding: 1rem;
+  background-color: #fff;
+}
+
+.calendar-weekdays,
+.calendar-content {
+  width: calc((var(--cellWidth) + .5rem) * 7);
+  display: flex;
+  flex-wrap: wrap;
+}

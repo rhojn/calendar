@@ -1,0 +1,22 @@
+:root {
+  --cellWidth: 2.5rem;
+  --poltawski: 'Poltawski Nowy', serif;
+}
+
+body {
+  margin: 0;
+  font-size: 16px;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #1B2746;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+*::after,
+*::before {
+  box-sizing: inherit;
+}

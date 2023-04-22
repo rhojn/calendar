@@ -1,0 +1,51 @@
+.cell {
+  margin: .25rem;
+  font-size: calc(var(--cellWidth) * .35);
+  width: var(--cellWidth);
+  height: var(--cellWidth);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  opacity: .4;
+  transition: all .2s ease;
+  cursor: pointer;
+}
+
+.days {
+  opacity: 1;
+}
+
+.days:not(.range):not(.inRange):not(
+    .current
+  ):hover {
+  background-color: rgba(0, 112, 255, 0.1);
+}
+
+.current,
+.current:hover {
+  background-color: rgb(0, 112, 255);
+  color: #fff;
+}
+
+.range {
+  background-color: rgb(173, 133, 238);
+  color: currentColor;
+}
+
+.inRange {
+  background-color: rgba(173, 133, 238, 0.2);
+  color: currentColor;
+  border-radius: 0;
+}
+
+.weekday {
+  opacity: 1;
+  font-size: calc(var(--cellWidth) * .35);
+  font-weight: 300;
+  cursor: default;
+}
+
+.selected {
+  background-color: rgba(0, 112, 255, 0.3);
+}

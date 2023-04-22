@@ -1,24 +1,11 @@
-import styles from './styles.module.css';
-import next from './chevron-right.svg';
-import prev from './chevron-left.svg';
+import styles from './styles.module.scss'
 
-const Header = ({ month, year, onNext, onPrev }) => {
+const Header = () => {
   return (
-    <div className={styles.header}>
-      <h1>
-        {month} {year}
-      </h1>
+    <header className={styles.header}>
+      <a className={styles.brand} href="/">Takda</a>
+    </header>
+  )
+}
 
-      <div className={styles.actions}>
-        <button className={styles.actionButton} onClick={onPrev}>
-          <img src={prev} alt='Previous Month' />
-        </button>
-        <button className={styles.actionButton} onClick={onNext}>
-          <img src={next} alt='Next Month' />
-        </button>
-      </div>
-    </div>
-  );
-};
-
-export default Header;
+export default Header

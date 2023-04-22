@@ -1,7 +1,7 @@
-import classNames from 'classnames';
-
-import styles from './styles.module.css';
-import Header from '../header';
+import { createContext, useState, useMemo } from 'react';
+import styles from './styles.module.scss';
+import Header from './header';
+import Cell from './cell';
 
 const MONTHS = [
   'January',
@@ -20,81 +20,108 @@ const MONTHS = [
 
 const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
-const CalendarCell = ({ day, current, range, onSelect }) => {
-  console.log(range);
-  const isDay = day && day instanceof Date;
-  const dayText = isDay ? day.getDate() : day;
-  const isCurrent = isDay && day.getTime() === current.getTime();
-  const hasRange = range && range[0] && range[1];
-  const isRange =
-    isDay &&
-    ((range[0] && day.getTime() === range[0].getTime()) ||
-      (range[1] && day.getTime() === range[1].getTime()));
-  const isInRange =
-    isDay &&
-    hasRange &&
-    day.getTime() > range[0].getTime() &&
-    day.getTime() < range[1].getTime();
-  const handleOnSelect = () => (isDay ? onSelect(day) : null);
-  return (
-    <span
-      className={classNames({
-        [styles['calendar-cell']]: true,
-        [styles['calendar-current']]: isCurrent,
-        [styles['calendar-cell-days']]: isDay,
-        [styles['calendar-cell-range']]: isRange,
-        [styles['calendar-cell-in-range']]: isInRange,
-      })}
-      onClick={handleOnSelect}
-    >
-      {dayText || ''}
-    </span>
-  );
-};
+export const CalendarContext = createContext(null);
 
-const Calendar = ({
-  currentDate,
-  displayMonth,
-  displayYear,
-  range,
-  onNext,
-  onPrev,
-  onSelect,
-}) => {
-  const nextMonth = new Date(displayYear, displayMonth + 1, 0);
-
+const Calendar = ({ selectedDate, range, onSelect }) => {
+  const currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
+  const [displayMonth, setDisplayMonth] = useState(currentDate.getMonth());
+  const [displayYear, setDisplayYear] = useState(new Date().getFullYear());
+  const prevMonth = new Date(displayYear, displayMonth, 0);
+  const currentMonth = new Date(displayYear, displayMonth + 1, 0);
+  const nextMonth = new Date(displayYear, displayMonth + 1, 1);
   const startDay = new Date(displayYear, displayMonth, 1);
+  const totalDays = currentMonth.getDate();
+  const startPadding = startDay.getDay();
+  const totalDayCells = startPadding + totalDays;
+  const endPadding = 42 - totalDayCells;
 
-  const totalDays = nextMonth.getDate();
-  const padding = startDay.getDay();
+  useMemo(() => {
+    setDisplayMonth(selectedDate.getMonth());
+    setDisplayYear(selectedDate.getFullYear());
+  }, [selectedDate]);
+
+  const handleOnNext = () => {
+    const month = displayMonth + 1;
+
+    if (month > 11) {
+      setDisplayMonth(0);
+      setDisplayYear(displayYear + 1);
+    } else {
+      setDisplayMonth(month);
+    }
+  };
+
+  const handleOnPrev = () => {
+    const month = displayMonth - 1;
+
+    if (month <= 0) {
+      setDisplayMonth(11);
+      setDisplayYear(displayYear - 1);
+    } else {
+      setDisplayMonth(month);
+    }
+  };
+
   return (
-    <div className={styles.calendar}>
-      <Header
-        month={MONTHS[displayMonth]}
-        year={displayYear}
-        onNext={onNext}
-        onPrev={onPrev}
-      />
-      <div className={styles['calendar-weekdays']}>
-        {WEEKDAYS.map((i, index) => (
-          <CalendarCell day={i} key={index} />
-        ))}
+    <CalendarContext.Provider
+      value={{ currentDate, selectedDate, displayMonth, displayYear }}
+    >
+      <div className={styles.calendar}>
+        <Header
+          month={MONTHS[displayMonth]}
+          year={displayYear}
+          onNext={handleOnNext}
+          onPrev={handleOnPrev}
+        />
+        <div className={styles['calendar-weekdays']}>
+          {WEEKDAYS.map((i, index) => (
+            <Cell isWeekday day={i} key={index} />
+          ))}
+        </div>
+        <div className={styles['calendar-content']}>
+          {Array.from(Array(startPadding)).map((_, index) => (
+            <Cell
+              key={index}
+              day={
+                new Date(
+                  prevMonth.getFullYear(),
+                  prevMonth.getMonth(),
+                  prevMonth.getDate() - (startPadding - (index + 1))
+                )
+              }
+              current={currentDate}
+              range={range}
+              onSelect={onSelect}
+            />
+          ))}
+          {Array.from(Array(totalDays)).map((_, index) => (
+            <Cell
+              day={new Date(displayYear, displayMonth, index + 1)}
+              current={currentDate}
+              range={range}
+              onSelect={onSelect}
+              key={index}
+            />
+          ))}
+          {Array.from(Array(endPadding)).map((_, index) => (
+            <Cell
+              key={index}
+              day={
+                new Date(
+                  nextMonth.getFullYear(),
+                  nextMonth.getMonth(),
+                  index + 1
+                )
+              }
+              current={currentDate}
+              range={range}
+              onSelect={onSelect}
+            />
+          ))}
+        </div>
       </div>
-      <div className={styles['calendar-content']}>
-        {Array.from(Array(padding)).map((_, index) => (
-          <CalendarCell key={index} />
-        ))}
-        {Array.from(Array(totalDays)).map((_, index) => (
-          <CalendarCell
-            day={new Date(displayYear, displayMonth, index + 1)}
-            current={currentDate}
-            range={range}
-            onSelect={onSelect}
-            key={index}
-          />
-        ))}
-      </div>
-    </div>
+    </CalendarContext.Provider>
   );
 };
 
